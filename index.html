@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐶 狗齡轉人類年齡計算器 (柯基背景)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+            
+            /* --- 背景圖片設定 --- */
+            /* 使用 Unsplash 上的柯基圖片 (用於範例，實際圖片可能會因Unsplash更新而變動) */
+            background-image: url('https://hackmd.io/_uploads/Hyc4usZlWe.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* 讓背景固定不隨內容滾動 */
+        }
+        
+        /* --- 覆蓋層以提高文字可讀性 (半透明白色) --- */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.7); 
+            z-index: -1;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9); /* 略微透明的容器背景 */
+            backdrop-filter: blur(5px); /* 輕微的毛玻璃效果 (非必須，但可提升質感) */
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            margin-top: 25px;
+            padding: 15px;
+            border: 2px dashed #4CAF50;
+            border-radius: 8px;
+            font-size: 24px;
+            font-weight: bold;
+            min-height: 30px;
+            color: #333;
+        }
+
+        #result.error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+
+        .reference {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: rgba(233, 236, 239, 0.9); /* 略為透明的淺灰色 */
+            border-radius: 8px;
+            text-align: left;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .reference h3 {
+            margin-top: 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🐶 狗齡轉人類年齡計算器</h1>
+        
+        <div class="input-group">
+            <label for="dogAge">請輸入狗的年齡 (歲):</label>
+            <input type="number" id="dogAge" placeholder="請輸入您的愛犬年齡" min="0"> 
+        </div>
+        
+        <button onclick="calculateHumanAge()">計算人類年齡</button>
+        
+        <div id="result">
+            </div>
+    </div>
+
+    <div class="reference container">
+        <h3>📊 年齡轉換參考依據</h3>
+        <p>本計算器採用一個廣泛使用的經驗法則進行轉換：</p>
+        <ul>
+            <li>**狗齡 1 歲:** 轉換為 **15 歲** 人類年齡。</li>
+            <li>**狗齡 2 歲:** 轉換為 **24 歲** 人類年齡 (在 1 歲基礎上再加 9 歲)。</li>
+            <li>**狗齡 $\ge 3$ 歲:** 之後每增加 1 歲狗齡，則增加 **4 歲** 人類年齡。</li>
+        </ul>
+        <p><strong>轉換公式 (適用於狗齡 $\ge 2$):</strong></p>
+        $$\text{人類年齡} = 24 + (\text{狗年齡} - 2) \times 4$$
+        <p>此轉換方法為簡化模型，實際年齡轉換會受品種、體型等因素影響。</p>
+        <p><strong>資料來源：</strong> 基於美國獸醫學會 (AVMA) 等機構提供之常見簡易轉換模型。</p>
+        <p><strong>背景圖片來源：</strong><br>柯基小狗 (Unsplash)</p>
+    </div>
+
+    <script>
+        /**
+         * 實現狗齡到人類年齡的轉換邏輯
+         */
+        function calculateHumanAge() {
+            const dogAgeInput = document.getElementById('dogAge');
+            const resultDiv = document.getElementById('result');
+            
+            const dogAgeValue = dogAgeInput.value.trim();
+
+            // 檢查輸入是否為空
+            if (dogAgeValue === "") {
+                resultDiv.innerHTML = "☝️ 請先輸入愛犬的年齡。";
+                resultDiv.classList.add('error');
+                return;
+            }
+
+            const dogAge = parseFloat(dogAgeValue);
+
+            // 清除之前的錯誤或結果樣式
+            resultDiv.classList.remove('error');
+            
+            // 驗證輸入
+            if (isNaN(dogAge) || dogAge < 0) {
+                resultDiv.innerHTML = "❌ 請輸入有效的非負數狗年齡。";
+                resultDiv.classList.add('error');
+                return;
+            }
+
+            let humanAge;
+
+            if (dogAge === 0) {
+                humanAge = 0; 
+            } else if (dogAge === 1) {
+                humanAge = 15; 
+            } else if (dogAge === 2) {
+                humanAge = 24; 
+            } else {
+                // 3歲及以上: 24歲 + (狗齡 - 2) * 4
+                humanAge = 24 + (dogAge - 2) * 4;
+            }
+
+            // 確保結果為整數 (四捨五入)
+            humanAge = Math.round(humanAge);
+
+            // 顯示結果
+            resultDiv.innerHTML = `🐶 **${dogAge} 歲** 的狗齡，相當於人類的 **${humanAge} 歲**。`;
+        }
+    </script>
+</body>
+</html>
