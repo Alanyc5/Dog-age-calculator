@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,15 +15,16 @@
             min-height: 100vh;
             margin: 0;
             color: #333;
-            
+
             /* --- 背景圖片設定 --- */
             /* 使用 Unsplash 上的柯基圖片 (用於範例，實際圖片可能會因Unsplash更新而變動) */
             background-image: url('https://hackmd.io/_uploads/Hyc4usZlWe.png');
             background-size: cover;
             background-position: center;
-            background-attachment: fixed; /* 讓背景固定不隨內容滾動 */
+            background-attachment: fixed;
+            /* 讓背景固定不隨內容滾動 */
         }
-        
+
         /* --- 覆蓋層以提高文字可讀性 (半透明白色) --- */
         body::before {
             content: '';
@@ -31,13 +33,15 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.7); 
+            background-color: rgba(255, 255, 255, 0.7);
             z-index: -1;
         }
 
         .container {
-            background-color: rgba(255, 255, 255, 0.9); /* 略微透明的容器背景 */
-            backdrop-filter: blur(5px); /* 輕微的毛玻璃效果 (非必須，但可提升質感) */
+            background-color: rgba(255, 255, 255, 0.9);
+            /* 略微透明的容器背景 */
+            backdrop-filter: blur(5px);
+            /* 輕微的毛玻璃效果 (非必須，但可提升質感) */
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -106,7 +110,8 @@
         .reference {
             margin-top: 30px;
             padding: 20px;
-            background-color: rgba(233, 236, 239, 0.9); /* 略為透明的淺灰色 */
+            background-color: rgba(233, 236, 239, 0.9);
+            /* 略為透明的淺灰色 */
             border-radius: 8px;
             text-align: left;
             font-size: 14px;
@@ -119,20 +124,19 @@
         }
     </style>
 </head>
-<body>
 
+<body>
     <div class="container">
         <h1>🐶 狗齡轉人類年齡計算器</h1>
-        
+
         <div class="input-group">
             <label for="dogAge">請輸入狗的年齡 (歲):</label>
-            <input type="number" id="dogAge" placeholder="請輸入您的愛犬年齡" min="0"> 
+            <input type="number" id="dogAge" placeholder="請輸入您的愛犬年齡" min="0">
         </div>
-        
+
         <button onclick="calculateHumanAge()">計算人類年齡</button>
-        
-        <div id="result">
-            </div>
+
+        <div id="result"></div>
     </div>
 
     <div class="reference container">
@@ -151,13 +155,23 @@
     </div>
 
     <script>
+        // 頁面載入時，從 localStorage 讀取狗年齡並填回輸入框
+        document.addEventListener('DOMContentLoaded', function () {
+            const dogAgeInput = document.getElementById('dogAge');
+            const storedDogAge = localStorage.getItem('dogAge');
+
+            if (storedDogAge !== null) {
+                dogAgeInput.value = storedDogAge;
+            }
+        });
+
         /**
-         * 實現狗齡到人類年齡的轉換邏輯
+         * 實現狗齡到人類年齡的轉換邏輯，並將狗年齡存入 localStorage
          */
         function calculateHumanAge() {
             const dogAgeInput = document.getElementById('dogAge');
             const resultDiv = document.getElementById('result');
-            
+
             const dogAgeValue = dogAgeInput.value.trim();
 
             // 檢查輸入是否為空
@@ -171,7 +185,7 @@
 
             // 清除之前的錯誤或結果樣式
             resultDiv.classList.remove('error');
-            
+
             // 驗證輸入
             if (isNaN(dogAge) || dogAge < 0) {
                 resultDiv.innerHTML = "❌ 請輸入有效的非負數狗年齡。";
@@ -179,14 +193,17 @@
                 return;
             }
 
+            // 輸入有效時，把狗年齡存到 localStorage
+            localStorage.setItem('dogAge', dogAgeValue);
+
             let humanAge;
 
             if (dogAge === 0) {
-                humanAge = 0; 
+                humanAge = 0;
             } else if (dogAge === 1) {
-                humanAge = 15; 
+                humanAge = 15;
             } else if (dogAge === 2) {
-                humanAge = 24; 
+                humanAge = 24;
             } else {
                 // 3歲及以上: 24歲 + (狗齡 - 2) * 4
                 humanAge = 24 + (dogAge - 2) * 4;
@@ -199,5 +216,7 @@
             resultDiv.innerHTML = `🐶 **${dogAge} 歲** 的狗齡，相當於人類的 **${humanAge} 歲**。`;
         }
     </script>
+
 </body>
+
 </html>
